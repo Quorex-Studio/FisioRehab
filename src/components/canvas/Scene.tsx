@@ -1,9 +1,50 @@
-import React from 'react';
-import { Canvas } from '@react-three/fiber';
+import React, { useEffect } from 'react';
+import { Canvas, useThree } from '@react-three/fiber';
 import { Environment, Float, ScrollControls } from '@react-three/drei';
 import { EffectComposer, Bloom, DepthOfField, ChromaticAberration } from '@react-three/postprocessing';
 import { AbstractModel } from './Model';
 import { BlendFunction } from 'postprocessing';
+import { useClinicalStore } from '../../store/useClinicalStore';
+import gsap from 'gsap';
+
+const CameraController = () => {
+  const { camera } = useThree();
+  const activeExercise = useClinicalStore((state) => state.activeExercise);
+
+  useEffect(() => {
+    // Definimos las posiciones objetivo según el ejercicio clínico
+    let targetPos = { x: 0, y: 0, z: 8 }; // Rest position
+    
+    switch (activeExercise) {
+      case 'Smile':
+        targetPos = { x: 0, y: -1, z: 6 }; // Acercamiento a zona inferior
+        break;
+      case 'Close_Eyes':
+        targetPos = { x: 0, y: 1.5, z: 5 }; // Paneo/Zoom orbital cinemático
+        break;
+      case 'Raise_Eyebrows':
+        targetPos = { x: 0, y: 2.5, z: 5.5 }; // Acercamiento a zona frontal
+        break;
+      default:
+        targetPos = { x: 0, y: 0, z: 8 };
+        break;
+    }
+
+    gsap.to(camera.position, {
+      x: targetPos.x,
+      y: targetPos.y,
+      z: targetPos.z,
+      duration: 2,
+      ease: "power3.inOut",
+      onUpdate: () => {
+        camera.lookAt(0, 0, 0);
+      }
+    });
+
+  }, [activeExercise, camera]);
+
+  return null;
+};
 
 export const Scene: React.FC = () => {
   return (
@@ -13,6 +54,7 @@ export const Scene: React.FC = () => {
         gl={{ antialias: false, alpha: false }}
         dpr={[1, 2]}
       >
+        <CameraController />
         <color attach="background" args={['#09090b']} />
         
         {/* Iluminación Cinematográfica */}

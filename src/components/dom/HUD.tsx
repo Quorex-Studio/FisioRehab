@@ -1,8 +1,10 @@
 import React, { useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { MagneticButton } from './MagneticButton';
-import { Activity, ShieldCheck, Zap } from 'lucide-react';
+import { ShieldCheck, Zap, Stethoscope } from 'lucide-react';
 import Lenis from 'lenis';
+import { ClinicalEvaluation } from './ClinicalEvaluation';
+import { ProgressTable } from './ProgressTable';
 
 export const HUD: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -72,17 +74,28 @@ export const HUD: React.FC = () => {
         </div>
       </motion.div>
 
-      {/* SECTION 2: Feature 1 */}
+      {/* SECTION 2: Clinical Simulator (Replaces Feature 1) */}
       <motion.div 
         style={{ y: yFeature1, opacity: opacityFeature1 }}
-        className="fixed top-0 left-0 w-full h-screen flex items-center justify-start pointer-events-none px-8 md:px-24"
+        className="fixed top-0 left-0 w-full h-screen flex items-center justify-between pointer-events-none px-8 md:px-12 gap-8"
       >
-        <div className="glass-panel p-8 max-w-lg pointer-events-auto text-left flex flex-col gap-4 border-l-4 border-l-primary">
-          <Activity className="w-8 h-8 text-primary" />
-          <h2 className="text-4xl font-bold text-white">Análisis Biomecánico 3D</h2>
-          <p className="text-slate-300 text-lg leading-relaxed">
-            Navega a través de las fibras musculares y evalúa la función del nervio facial en tiempo real con precisión milimétrica utilizando nuestro motor WebGL personalizado.
-          </p>
+        <div className="w-full flex justify-between items-start pt-20">
+          <ClinicalEvaluation />
+          
+          <div className="hidden lg:flex flex-col gap-6 w-full max-w-lg items-end">
+            <div className="glass-panel p-6 pointer-events-auto w-full text-right flex flex-col gap-2 border-r-4 border-r-primary">
+              <div className="flex items-center justify-end gap-3 text-primary mb-2">
+                <Stethoscope className="w-6 h-6" />
+                <h2 className="text-2xl font-bold text-white">Análisis Biomecánico</h2>
+              </div>
+              <p className="text-slate-300 text-sm">
+                Motor WebGL evaluando función del nervio facial en tiempo real. 
+                Selecciona un protocolo para aislar las fibras musculares.
+              </p>
+            </div>
+            
+            <ProgressTable />
+          </div>
         </div>
       </motion.div>
 
