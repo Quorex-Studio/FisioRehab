@@ -13,10 +13,10 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
  
-    --primary: 160 93% 30%; /* Emerald */
+    --primary: 221.2 83.2% 53.3%; /* Clinical Blue 600 (#2563eb) */
     --primary-foreground: 210 40% 98%;
  
-    --secondary: 224 76% 48%; /* Blue */
+    --secondary: 199 89% 48%; /* Medical Sky 500 (#0ea5e9) */
     --secondary-foreground: 210 40% 98%;
  
     --border: 217.2 32.6% 17.5%;
@@ -47,10 +47,10 @@
 
 /* Glassmorphism Utilities para el HUD */
 .glass-panel {
-  @apply bg-black/20 backdrop-blur-xl border border-white/10 shadow-2xl rounded-2xl;
+  @apply bg-slate-900/60 backdrop-blur-2xl border border-white/20 shadow-2xl rounded-2xl;
 }
 .glass-button {
-  @apply bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-full hover:bg-white/20 transition-all duration-300;
+  @apply bg-white/10 backdrop-blur-xl border border-white/20 text-white rounded-full hover:bg-white/20 hover:border-white/30 transition-all duration-300;
 }
 
 /* Lenis base styles */

@@ -54,7 +54,7 @@ export const ClinicalEvaluation: React.FC = () => {
     setSunnybrookGrade(1);
   };
 
-  // Escala Sunnybrook colors
+  // Escala Sunnybrook colors (semantic, independent of theme)
   const gradeColors: Record<number, string> = {
     1: 'bg-red-500/20 text-red-400 border-red-500/50',
     2: 'bg-orange-500/20 text-orange-400 border-orange-500/50',
@@ -112,7 +112,7 @@ export const ClinicalEvaluation: React.FC = () => {
             <div className="flex flex-col items-center gap-4 bg-black/40 p-6 rounded-2xl border border-white/5">
               <div className={cn(
                 "text-5xl font-mono tracking-wider font-bold transition-colors duration-300",
-                isRunning ? "text-primary drop-shadow-[0_0_10px_rgba(5,150,105,0.8)]" : "text-white"
+                isRunning ? "text-primary drop-shadow-[0_0_10px_rgba(37,99,235,0.8)]" : "text-white"
               )}>
                 {formatTime(stopwatchTime)}
               </div>
@@ -164,7 +164,7 @@ export const ClinicalEvaluation: React.FC = () => {
                 recordEvaluation();
                 setIsRunning(false);
               }}
-              className="w-full bg-gradient-to-r from-primary to-emerald-400 text-black font-bold py-4 rounded-xl text-lg mt-2 shadow-[0_0_20px_rgba(5,150,105,0.4)]"
+              className="w-full bg-gradient-to-r from-primary to-sky-400 text-white font-bold py-4 rounded-xl text-lg mt-2 shadow-[0_0_20px_rgba(37,99,235,0.4)]"
             >
               REGISTRAR EVALUACIÓN
             </MagneticButton>
