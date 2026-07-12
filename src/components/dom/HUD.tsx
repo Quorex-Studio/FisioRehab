@@ -1,10 +1,16 @@
 import React, { useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { MagneticButton } from './MagneticButton';
-import { ShieldCheck, Zap, Stethoscope } from 'lucide-react';
+import { ShieldCheck, Zap, Stethoscope, ArrowUpCircle } from 'lucide-react';
 import Lenis from 'lenis';
 import { ClinicalEvaluation } from './ClinicalEvaluation';
 import { ProgressTable } from './ProgressTable';
+
+declare global {
+  interface Window {
+    lenis: Lenis;
+  }
+}
 
 export const HUD: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -27,7 +33,14 @@ export const HUD: React.FC = () => {
     }
     requestAnimationFrame(raf);
 
-    return () => lenis.destroy();
+    // Make lenis globally available for buttons if needed, or just rely on native scroll
+    window.lenis = lenis;
+
+    return () => {
+      lenis.destroy();
+      // @ts-ignore
+      delete window.lenis;
+    };
   }, []);
 
   const { scrollYProgress } = useScroll({ target: containerRef });
@@ -40,6 +53,14 @@ export const HUD: React.FC = () => {
 
   const yFeature2 = useTransform(scrollYProgress, [0.5, 0.7, 0.9], [200, 0, -200]);
   const opacityFeature2 = useTransform(scrollYProgress, [0.5, 0.7, 0.9], [0, 1, 0]);
+
+  const scrollToSection = (vhMultiplier: number) => {
+    if (window.lenis) {
+      window.lenis.scrollTo(window.innerHeight * vhMultiplier, { duration: 1.5 });
+    } else {
+      window.scrollTo({ top: window.innerHeight * vhMultiplier, behavior: 'smooth' });
+    }
+  };
 
   return (
     <div ref={containerRef} className="relative z-10 w-full" style={{ height: '400vh' }}>
@@ -66,7 +87,7 @@ export const HUD: React.FC = () => {
             Experiencia Clínica Volumétrica de Nueva Generación.
           </p>
           <div className="mt-8">
-            <MagneticButton>
+            <MagneticButton onClick={() => scrollToSection(1.6)}>
               <Zap className="w-5 h-5" />
               INICIAR DIAGNÓSTICO
             </MagneticButton>
@@ -109,8 +130,12 @@ export const HUD: React.FC = () => {
           <p className="text-slate-300 text-lg leading-relaxed">
             Ingresa a la clínica virtual y manipula los tejidos anatómicos directamente con tus manos gracias al seguimiento óptico (Hand-Tracking) de WebXR.
           </p>
-          <MagneticButton className="bg-secondary/80 hover:bg-secondary">
+          <MagneticButton onClick={() => alert('Módulo WebXR en desarrollo...')} className="bg-secondary/80 hover:bg-secondary">
             ENTRAR AL PORTAL VR
+          </MagneticButton>
+          <MagneticButton onClick={() => scrollToSection(0)} className="bg-white/10 hover:bg-white/20 mt-2">
+            <ArrowUpCircle className="w-5 h-5" />
+            VOLVER AL INICIO
           </MagneticButton>
         </div>
       </motion.div>
