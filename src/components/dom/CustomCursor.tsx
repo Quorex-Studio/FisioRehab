@@ -55,7 +55,7 @@ export const CustomCursor: React.FC = () => {
   return (
     <motion.div
       className="fixed top-0 left-0 rounded-full pointer-events-none z-[9999]"
-      variants={variants}
+      variants={variants as any}
       animate={isHovering ? 'hover' : 'default'}
     />
   );

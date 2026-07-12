@@ -31,7 +31,7 @@ export const MagneticButton: React.FC<MagneticButtonProps> = ({ children, classN
       animate={{ x: position.x, y: position.y }}
       transition={{ type: 'spring', stiffness: 150, damping: 15, mass: 0.1 }}
       className={`relative px-8 py-4 bg-primary/80 backdrop-blur-md text-white font-semibold tracking-wider rounded-full overflow-hidden group ${className}`}
-      {...props}
+      {...(props as any)}
     >
       <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out z-0"></div>
       <span className="relative z-10 flex items-center justify-center gap-2">
