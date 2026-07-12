@@ -8,7 +8,7 @@ import { ProgressTable } from './ProgressTable';
 
 declare global {
   interface Window {
-    lenis: Lenis;
+    customLenis: Lenis;
   }
 }
 
@@ -34,29 +34,29 @@ export const HUD: React.FC = () => {
     requestAnimationFrame(raf);
 
     // Make lenis globally available for buttons if needed, or just rely on native scroll
-    window.lenis = lenis;
+    window.customLenis = lenis;
 
     return () => {
       lenis.destroy();
       // @ts-ignore
-      delete window.lenis;
+      delete window.customLenis;
     };
   }, []);
 
   const { scrollYProgress } = useScroll({ target: containerRef });
   
-  const yHero = useTransform(scrollYProgress, [0, 0.2], [0, -200]);
+  const yHero = useTransform(scrollYProgress, [0, 0.2], [0, -1000]);
   const opacityHero = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
 
-  const yFeature1 = useTransform(scrollYProgress, [0.2, 0.4, 0.6], [200, 0, -200]);
+  const yFeature1 = useTransform(scrollYProgress, [0.2, 0.4, 0.6], [1000, 0, -1000]);
   const opacityFeature1 = useTransform(scrollYProgress, [0.2, 0.4, 0.6], [0, 1, 0]);
 
-  const yFeature2 = useTransform(scrollYProgress, [0.5, 0.7, 0.9], [200, 0, -200]);
+  const yFeature2 = useTransform(scrollYProgress, [0.5, 0.7, 0.9], [1000, 0, -1000]);
   const opacityFeature2 = useTransform(scrollYProgress, [0.5, 0.7, 0.9], [0, 1, 0]);
 
   const scrollToSection = (vhMultiplier: number) => {
-    if (window.lenis) {
-      window.lenis.scrollTo(window.innerHeight * vhMultiplier, { duration: 1.5 });
+    if (window.customLenis) {
+      window.customLenis.scrollTo(window.innerHeight * vhMultiplier, { duration: 1.5 });
     } else {
       window.scrollTo({ top: window.innerHeight * vhMultiplier, behavior: 'smooth' });
     }
@@ -70,23 +70,23 @@ export const HUD: React.FC = () => {
         style={{ y: yHero, opacity: opacityHero }}
         className="fixed top-0 left-0 w-full h-screen flex flex-col items-center justify-center pointer-events-none"
       >
-        <div className="glass-panel p-12 text-center max-w-4xl mx-4 pointer-events-auto flex flex-col items-center gap-6">
+        <div className="glass-panel p-6 md:p-12 text-center max-w-4xl mx-4 pointer-events-auto flex flex-col items-center gap-6">
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 1, ease: 'easeOut' }}
-            className="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center border border-white/20 shadow-xl"
+            className="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-white/10 flex items-center justify-center border border-white/20 shadow-xl"
           >
-            <ShieldCheck className="w-8 h-8 text-primary" />
+            <ShieldCheck className="w-6 h-6 md:w-8 md:h-8 text-primary" />
           </motion.div>
           
-          <h1 className="text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white via-slate-200 to-slate-500 tracking-tighter">
+          <h1 className="text-5xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white via-slate-200 to-slate-500 tracking-tighter">
             FacioRehab
           </h1>
-          <p className="text-xl md:text-2xl text-slate-300 max-w-2xl font-light">
+          <p className="text-lg md:text-2xl text-slate-300 max-w-2xl font-light">
             Experiencia Clínica Volumétrica de Nueva Generación.
           </p>
-          <div className="mt-8">
+          <div className="mt-4 md:mt-8">
             <MagneticButton onClick={() => scrollToSection(1.6)}>
               <Zap className="w-5 h-5" />
               INICIAR DIAGNÓSTICO
@@ -98,9 +98,9 @@ export const HUD: React.FC = () => {
       {/* SECTION 2: Clinical Simulator (Replaces Feature 1) */}
       <motion.div 
         style={{ y: yFeature1, opacity: opacityFeature1 }}
-        className="fixed top-0 left-0 w-full h-screen flex items-center justify-between pointer-events-none px-8 md:px-12 gap-8"
+        className="fixed top-0 left-0 w-full h-screen flex items-center justify-between pointer-events-none px-4 md:px-12 gap-8"
       >
-        <div className="w-full flex justify-between items-start pt-20">
+        <div className="w-full flex justify-between items-start pt-10 md:pt-20">
           <ClinicalEvaluation />
           
           <div className="hidden lg:flex flex-col gap-6 w-full max-w-lg items-end">
@@ -123,11 +123,11 @@ export const HUD: React.FC = () => {
       {/* SECTION 3: Feature 2 (WebXR Portal) */}
       <motion.div 
         style={{ y: yFeature2, opacity: opacityFeature2 }}
-        className="fixed top-0 left-0 w-full h-screen flex items-center justify-end pointer-events-none px-8 md:px-24"
+        className="fixed top-0 left-0 w-full h-screen flex items-center justify-end pointer-events-none px-4 md:px-24"
       >
-        <div className="glass-panel p-10 max-w-lg pointer-events-auto text-right flex flex-col items-end gap-6 border-r-4 border-r-secondary">
-          <h2 className="text-5xl font-black text-white">Portal de Realidad Virtual</h2>
-          <p className="text-slate-300 text-lg leading-relaxed">
+        <div className="glass-panel p-6 md:p-10 max-w-lg pointer-events-auto text-right flex flex-col items-end gap-6 border-r-4 border-r-secondary mx-4 md:mx-0">
+          <h2 className="text-3xl md:text-5xl font-black text-white">Portal de Realidad Virtual</h2>
+          <p className="text-slate-300 text-base md:text-lg leading-relaxed">
             Ingresa a la clínica virtual y manipula los tejidos anatómicos directamente con tus manos gracias al seguimiento óptico (Hand-Tracking) de WebXR.
           </p>
           <MagneticButton onClick={() => alert('Módulo WebXR en desarrollo...')} className="bg-secondary/80 hover:bg-secondary">
