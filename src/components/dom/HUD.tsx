@@ -5,6 +5,8 @@ import { ShieldCheck, Zap, Stethoscope, ArrowUpCircle } from 'lucide-react';
 import Lenis from 'lenis';
 import { ClinicalEvaluation } from './ClinicalEvaluation';
 import { ProgressTable } from './ProgressTable';
+import { VRButton } from '@react-three/xr';
+import { xrStore } from '../../store/xrStore';
 
 declare global {
   interface Window {
@@ -130,13 +132,18 @@ export const HUD: React.FC = () => {
           <p className="text-slate-300 text-base md:text-lg leading-relaxed">
             Ingresa a la clínica virtual y manipula los tejidos anatómicos directamente con tus manos gracias al seguimiento óptico (Hand-Tracking) de WebXR.
           </p>
-          <MagneticButton onClick={() => alert('Módulo WebXR en desarrollo...')} className="bg-secondary/80 hover:bg-secondary">
-            ENTRAR AL PORTAL VR
-          </MagneticButton>
-          <MagneticButton onClick={() => scrollToSection(0)} className="bg-white/10 hover:bg-white/20 mt-2">
-            <ArrowUpCircle className="w-5 h-5" />
-            VOLVER AL INICIO
-          </MagneticButton>
+          
+          <div className="flex flex-col gap-4 mt-4 w-full items-end">
+            {/* El botón de VR nativo de R3F se insertará aquí */}
+            <div className="vr-button-container relative z-50">
+              <VRButton store={xrStore} />
+            </div>
+
+            <MagneticButton onClick={() => scrollToSection(0)} className="bg-white/10 hover:bg-white/20">
+              <ArrowUpCircle className="w-5 h-5" />
+              VOLVER AL INICIO
+            </MagneticButton>
+          </div>
         </div>
       </motion.div>
 
