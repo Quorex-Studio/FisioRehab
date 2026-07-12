@@ -5,7 +5,7 @@ import { ShieldCheck, Zap, Stethoscope, ArrowUpCircle } from 'lucide-react';
 import Lenis from 'lenis';
 import { ClinicalEvaluation } from './ClinicalEvaluation';
 import { ProgressTable } from './ProgressTable';
-import { VRButton } from '@react-three/xr';
+import { ARButton } from '@react-three/xr';
 import { xrStore } from '../../store/xrStore';
 
 declare global {
@@ -128,15 +128,15 @@ export const HUD: React.FC = () => {
         className="fixed top-0 left-0 w-full h-[100dvh] flex items-center justify-end pointer-events-none px-4 md:px-24"
       >
         <div className="glass-panel p-6 md:p-10 max-w-lg pointer-events-auto text-right flex flex-col items-end gap-6 border-r-4 border-r-secondary mx-4 md:mx-0">
-          <h2 className="text-3xl md:text-5xl font-black text-white">Portal de Realidad Virtual</h2>
+          <h2 className="text-3xl md:text-5xl font-black text-white">Portal de Realidad Aumentada</h2>
           <p className="text-slate-300 text-base md:text-lg leading-relaxed">
-            Ingresa a la clínica virtual y manipula los tejidos anatómicos directamente con tus manos gracias al seguimiento óptico (Hand-Tracking) de WebXR.
+            Ingresa a la clínica en Realidad Aumentada y manipula los tejidos anatómicos directamente en tu entorno físico gracias al seguimiento óptico (Hand-Tracking) de WebXR.
           </p>
           
           <div className="flex flex-col gap-4 mt-4 w-full items-end">
-            {/* El botón de VR nativo de R3F se insertará aquí */}
-            <div className="vr-button-container relative z-50">
-              <VRButton store={xrStore} />
+            {/* El botón de AR nativo de R3F se insertará aquí */}
+            <div className="ar-button-container relative z-50">
+              <ARButton store={xrStore} />
             </div>
 
             <MagneticButton onClick={() => scrollToSection(0)} className="bg-white/10 hover:bg-white/20">
