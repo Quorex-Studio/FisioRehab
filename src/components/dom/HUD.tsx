@@ -45,13 +45,13 @@ export const HUD: React.FC = () => {
 
   const { scrollYProgress } = useScroll({ target: containerRef });
   
-  const yHero = useTransform(scrollYProgress, [0, 0.2], [0, -1000]);
+  const yHero = useTransform(scrollYProgress, [0, 0.2], ['0vh', '-100vh']);
   const opacityHero = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
 
-  const yFeature1 = useTransform(scrollYProgress, [0.2, 0.4, 0.6], [1000, 0, -1000]);
+  const yFeature1 = useTransform(scrollYProgress, [0.2, 0.4, 0.6], ['100vh', '0vh', '-100vh']);
   const opacityFeature1 = useTransform(scrollYProgress, [0.2, 0.4, 0.6], [0, 1, 0]);
 
-  const yFeature2 = useTransform(scrollYProgress, [0.5, 0.7, 0.9], [1000, 0, -1000]);
+  const yFeature2 = useTransform(scrollYProgress, [0.5, 0.7, 0.9], ['100vh', '0vh', '-100vh']);
   const opacityFeature2 = useTransform(scrollYProgress, [0.5, 0.7, 0.9], [0, 1, 0]);
 
   const scrollToSection = (vhMultiplier: number) => {
@@ -68,7 +68,7 @@ export const HUD: React.FC = () => {
       {/* SECTION 1: Hero */}
       <motion.div 
         style={{ y: yHero, opacity: opacityHero }}
-        className="fixed top-0 left-0 w-full h-screen flex flex-col items-center justify-center pointer-events-none"
+        className="fixed top-0 left-0 w-full h-[100dvh] flex flex-col items-center justify-center pointer-events-none"
       >
         <div className="glass-panel p-6 md:p-12 text-center max-w-4xl mx-4 pointer-events-auto flex flex-col items-center gap-6">
           <motion.div
@@ -98,7 +98,7 @@ export const HUD: React.FC = () => {
       {/* SECTION 2: Clinical Simulator (Replaces Feature 1) */}
       <motion.div 
         style={{ y: yFeature1, opacity: opacityFeature1 }}
-        className="fixed top-0 left-0 w-full h-screen flex items-center justify-between pointer-events-none px-4 md:px-12 gap-8"
+        className="fixed top-0 left-0 w-full h-[100dvh] flex items-center justify-between pointer-events-none px-4 md:px-12 gap-8"
       >
         <div className="w-full flex justify-between items-start pt-10 md:pt-20">
           <ClinicalEvaluation />
@@ -123,7 +123,7 @@ export const HUD: React.FC = () => {
       {/* SECTION 3: Feature 2 (WebXR Portal) */}
       <motion.div 
         style={{ y: yFeature2, opacity: opacityFeature2 }}
-        className="fixed top-0 left-0 w-full h-screen flex items-center justify-end pointer-events-none px-4 md:px-24"
+        className="fixed top-0 left-0 w-full h-[100dvh] flex items-center justify-end pointer-events-none px-4 md:px-24"
       >
         <div className="glass-panel p-6 md:p-10 max-w-lg pointer-events-auto text-right flex flex-col items-end gap-6 border-r-4 border-r-secondary mx-4 md:mx-0">
           <h2 className="text-3xl md:text-5xl font-black text-white">Portal de Realidad Virtual</h2>
