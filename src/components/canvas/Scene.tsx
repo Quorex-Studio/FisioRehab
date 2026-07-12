@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
-import { Environment, Float, ScrollControls } from '@react-three/drei';
-import { EffectComposer, Bloom, DepthOfField, ChromaticAberration } from '@react-three/postprocessing';
+import { Environment, Float } from '@react-three/drei';
+import { EffectComposer, Bloom, ChromaticAberration } from '@react-three/postprocessing';
 import { AbstractModel } from './Model';
 import { BlendFunction } from 'postprocessing';
 import { useClinicalStore } from '../../store/useClinicalStore';
@@ -51,7 +51,7 @@ export const Scene: React.FC = () => {
     <div className="fixed inset-0 z-0 bg-background">
       <Canvas
         camera={{ position: [0, 0, 8], fov: 45 }}
-        gl={{ antialias: false, alpha: false }}
+        gl={{ antialias: true, alpha: false, powerPreference: "high-performance" }}
         dpr={[1, 2]}
       >
         <CameraController />
@@ -65,20 +65,16 @@ export const Scene: React.FC = () => {
         {/* Entorno HDRI para reflejos */}
         <Environment preset="city" />
 
-        {/* ScrollControls para sincronizar R3F con el scroll del usuario */}
-        <ScrollControls pages={4} damping={0.1}>
-          <Float speed={2} rotationIntensity={0.5} floatIntensity={1}>
-            <AbstractModel />
-          </Float>
-        </ScrollControls>
+        <Float speed={2} rotationIntensity={0.5} floatIntensity={1}>
+          <AbstractModel />
+        </Float>
 
-        {/* Post-Procesamiento AAA */}
-        <EffectComposer>
+        {/* Post-Procesamiento AAA - Optimizado para nitidez (4K/HD) y rendimiento */}
+        <EffectComposer multisampling={4}>
           <Bloom luminanceThreshold={0.2} mipmapBlur intensity={1.5} />
-          <DepthOfField target={[0, 0, 0]} focalLength={0.02} bokehScale={2} height={480} />
           <ChromaticAberration
             blendFunction={BlendFunction.NORMAL}
-            offset={[0.002, 0.002] as any}
+            offset={[0.0015, 0.0015] as any}
           />
         </EffectComposer>
       </Canvas>
