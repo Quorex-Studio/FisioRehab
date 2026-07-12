@@ -1,0 +1,113 @@
+import React, { useEffect, useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { MagneticButton } from './MagneticButton';
+import { Activity, ShieldCheck, Zap } from 'lucide-react';
+import Lenis from 'lenis';
+
+export const HUD: React.FC = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Smooth Scroll setup
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: 'vertical',
+      gestureOrientation: 'vertical',
+      smoothWheel: true,
+      wheelMultiplier: 1,
+      touchMultiplier: 2,
+    });
+
+    function raf(time: number) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    return () => lenis.destroy();
+  }, []);
+
+  const { scrollYProgress } = useScroll({ target: containerRef });
+  
+  const yHero = useTransform(scrollYProgress, [0, 0.2], [0, -200]);
+  const opacityHero = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
+
+  const yFeature1 = useTransform(scrollYProgress, [0.2, 0.4, 0.6], [200, 0, -200]);
+  const opacityFeature1 = useTransform(scrollYProgress, [0.2, 0.4, 0.6], [0, 1, 0]);
+
+  const yFeature2 = useTransform(scrollYProgress, [0.5, 0.7, 0.9], [200, 0, -200]);
+  const opacityFeature2 = useTransform(scrollYProgress, [0.5, 0.7, 0.9], [0, 1, 0]);
+
+  return (
+    <div ref={containerRef} className="relative z-10 w-full" style={{ height: '400vh' }}>
+      
+      {/* SECTION 1: Hero */}
+      <motion.div 
+        style={{ y: yHero, opacity: opacityHero }}
+        className="fixed top-0 left-0 w-full h-screen flex flex-col items-center justify-center pointer-events-none"
+      >
+        <div className="glass-panel p-12 text-center max-w-4xl mx-4 pointer-events-auto flex flex-col items-center gap-6">
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 1, ease: 'easeOut' }}
+            className="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center border border-white/20 shadow-xl"
+          >
+            <ShieldCheck className="w-8 h-8 text-primary" />
+          </motion.div>
+          
+          <h1 className="text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white via-slate-200 to-slate-500 tracking-tighter">
+            FacioRehab
+          </h1>
+          <p className="text-xl md:text-2xl text-slate-300 max-w-2xl font-light">
+            Experiencia Clínica Volumétrica de Nueva Generación.
+          </p>
+          <div className="mt-8">
+            <MagneticButton>
+              <Zap className="w-5 h-5" />
+              INICIAR DIAGNÓSTICO
+            </MagneticButton>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* SECTION 2: Feature 1 */}
+      <motion.div 
+        style={{ y: yFeature1, opacity: opacityFeature1 }}
+        className="fixed top-0 left-0 w-full h-screen flex items-center justify-start pointer-events-none px-8 md:px-24"
+      >
+        <div className="glass-panel p-8 max-w-lg pointer-events-auto text-left flex flex-col gap-4 border-l-4 border-l-primary">
+          <Activity className="w-8 h-8 text-primary" />
+          <h2 className="text-4xl font-bold text-white">Análisis Biomecánico 3D</h2>
+          <p className="text-slate-300 text-lg leading-relaxed">
+            Navega a través de las fibras musculares y evalúa la función del nervio facial en tiempo real con precisión milimétrica utilizando nuestro motor WebGL personalizado.
+          </p>
+        </div>
+      </motion.div>
+
+      {/* SECTION 3: Feature 2 (WebXR Portal) */}
+      <motion.div 
+        style={{ y: yFeature2, opacity: opacityFeature2 }}
+        className="fixed top-0 left-0 w-full h-screen flex items-center justify-end pointer-events-none px-8 md:px-24"
+      >
+        <div className="glass-panel p-10 max-w-lg pointer-events-auto text-right flex flex-col items-end gap-6 border-r-4 border-r-secondary">
+          <h2 className="text-5xl font-black text-white">Portal de Realidad Virtual</h2>
+          <p className="text-slate-300 text-lg leading-relaxed">
+            Ingresa a la clínica virtual y manipula los tejidos anatómicos directamente con tus manos gracias al seguimiento óptico (Hand-Tracking) de WebXR.
+          </p>
+          <MagneticButton className="bg-secondary/80 hover:bg-secondary">
+            ENTRAR AL PORTAL VR
+          </MagneticButton>
+        </div>
+      </motion.div>
+
+      {/* Footer Indicador */}
+      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 text-white/50 text-sm font-medium tracking-widest uppercase flex flex-col items-center gap-2 pointer-events-none">
+        Scroll para explorar
+        <div className="w-[1px] h-12 bg-gradient-to-b from-white/50 to-transparent"></div>
+      </div>
+
+    </div>
+  );
+};
