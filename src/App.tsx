@@ -1,19 +1,18 @@
-import { Scene } from './components/canvas/Scene';
-import { HUD } from './components/dom/HUD';
-import { CustomCursor } from './components/dom/CustomCursor';
+import "@/App.css";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Toaster } from "sonner";
+import Dashboard from "@/pages/Dashboard";
 
 function App() {
   return (
-    <>
-      {/* 3D WebGL Background Scene */}
-      <Scene />
-      
-      {/* DOM Overlay with Framer Motion and Lenis Scroll */}
-      <HUD />
-      
-      {/* Custom Lens/WebGL DOM Cursor */}
-      <CustomCursor />
-    </>
+    <div className="App">
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+        </Routes>
+      </BrowserRouter>
+      <Toaster position="top-center" richColors />
+    </div>
   );
 }
 

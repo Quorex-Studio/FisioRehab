@@ -1,36 +1,32 @@
-# FacioRehab - Mapa de Proyecto (Awwwards WebGL Edition)
+# FacioRehab - Mapa de Proyecto (Prototipo Clínico)
 
 ## Arquitectura y Convenciones
 
 - **Framework Core**: Vite + React + TypeScript (TSX)
 - **Motor 3D & Ecosistema WebGL**:
-  - `three.js` & `@react-three/fiber`
-  - `@react-three/drei` (Helpers y Materiales Avanzados)
-  - `@react-three/postprocessing` (Bloom, Chromatic Aberration, Depth of Field)
-- **Cinemática & UI Overlay**:
-  - `gsap` + `lenis` (Smooth Scrolling de Hardware)
-  - `framer-motion` (HUD Animations & Magnetic Buttons)
-- **Estado Global & Telemetría**:
-  - `zustand` (Sincronización DOM/WebGL sin re-renders)
-- **WebXR**:
-  - `@react-three/xr` (Para tracking de manos en clínica VR)
+  - `@google/model-viewer` (Visor 3D Declarativo vía Web Components)
+  - Soporte integrado de AR (WebXR, Scene Viewer, Quick Look)
+- **Enrutamiento & Estado**:
+  - `react-router-dom` para navegación
+  - Estado local en React (`useState`, `useRef`) para el cronómetro y la telemetría clínica
 - **Estilos DOM**: Tailwind CSS + CSS Variables (`src/index.css`)
-- **Estética**: Premium, inmersiva, volumétrica, "glassmorphism", colores blancos/esmeralda/azul corporativo con Shaders GLSL.
+- **Estética**: Interfaz clínica, limpia, profesional (Glassmorphism sutil, bordes suaves, colores corporativos azul/esmeralda).
+- **Notificaciones**: `sonner` para feedback de acciones (toasts).
 
 ## Estructura de Componentes Clave:
-- `/src/App.tsx` - Orquestador Principal (Canvas 3D + HUD)
-- `/src/store/useClinicalStore.ts` - Estado Global de Ejercicios Clínicos y Telemetría
-- `/src/components/canvas/Scene.tsx` - Escena 3D Raíz (Luces, Cámara GSAP, Entorno, Post-Procesamiento)
-- `/src/components/canvas/Model.tsx` - Modelo Anatómico Abstracto WebGL reactivo al estado clínico
-- `/src/components/dom/HUD.tsx` - Interfaz sobrepuesta (DOM) usando Framer Motion y Scroll-Telling
-- `/src/components/dom/ClinicalEvaluation.tsx` - Interfaz de Simulador Clínico (Cronómetro, Tarjetas, Escala Sunnybrook)
-- `/src/components/dom/ProgressTable.tsx` - Tabla de registros y métricas
-- `/src/components/dom/CustomCursor.tsx` - Cursor dinámico/lente magnética
-- `/src/components/dom/MagneticButton.tsx` - Componente de botón con física de gravedad inversa
+- `/src/App.tsx` - Orquestador Principal y Enrutador
+- `/src/pages/Dashboard.tsx` - Vista Principal del Simulador Clínico
+- `/src/components/ArViewer.tsx` - Contenedor del Visor 3D y Detección de Dispositivos (Móvil/Escritorio)
+- `/src/components/Header.tsx` - Cabecera de la aplicación
+- `/src/components/Stopwatch.tsx` - Cronómetro Clínico de precisión
+- `/src/components/EvaluationScale.tsx` - Tarjeta de evaluación de grados (1-5)
+- `/src/components/ProgressTable.tsx` - Tabla de historial de ejercicios de la sesión
+- `/src/components/ResourcesGrid.tsx` - Grid interactivo de recursos médicos
+- `/src/components/ui/*` - Componentes base de UI (shadcn-like): `dialog`, `table`.
 
 ## RPCs & Base de Datos
-- *Por definir cuando se integre backend. Actualmente Front-end SPA 3D.*
+- *Por definir cuando se integre backend. Actualmente Front-end SPA.*
 
 ## Skills & Reglas
-- Reglas globales aplicadas: Experiencia Awwwards de más de $20k. No placeholders simples, UI/UX de vanguardia.
-- Modificación completa del flujo de trabajo clínico estático hacia narrativa "Scroll-Telling".
+- Reglas globales aplicadas: Mantener la limpieza y claridad de los componentes.
+- Modificación completa hacia una interfaz clínica más robusta, fácil de usar y con soporte nativo de AR móvil mediante model-viewer.
