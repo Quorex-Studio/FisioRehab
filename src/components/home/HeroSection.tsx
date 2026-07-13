@@ -25,18 +25,19 @@ export default function HeroSection() {
           Nuestra tecnología analiza la musculatura facial en tiempo real mediante puntos clave, ofreciendo una evaluación objetiva y ejercicios guiados desde cualquier navegador.
         </p>
 
-        <motion.div 
-          className="pt-8"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          <button 
-            onClick={() => navigate('/diagnostico')}
+        <div className="pt-8">
+          <motion.button 
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => {
+              console.log('Navigating to /diagnostico');
+              navigate('/diagnostico');
+            }}
             className="inline-block relative px-8 py-4 text-lg font-medium text-white transition-all duration-300 bg-blue-600 rounded-2xl shadow-[0_0_40px_-10px_rgba(37,99,235,0.5)] hover:bg-blue-700 hover:shadow-[0_0_60px_-15px_rgba(37,99,235,0.6)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-50 cursor-pointer"
           >
             Iniciar Diagnóstico
-          </button>
-        </motion.div>
+          </motion.button>
+        </div>
       </motion.div>
     </section>
   );

@@ -4,6 +4,7 @@ import { ScanFace } from "lucide-react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Environment } from "@react-three/drei";
 import { useNavigate } from "react-router-dom";
+import { FacialNervesModel } from "../3d/FacialNervesModel";
 
 export default function ArShowcase() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -33,18 +34,20 @@ export default function ArShowcase() {
             </p>
           </motion.div>
 
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
-          >
-            <button 
-              onClick={() => navigate('/diagnostico')}
+          <div>
+            <motion.button 
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
+              onClick={() => {
+                console.log('Navigating to /diagnostico from ArShowcase');
+                navigate('/diagnostico');
+              }}
               className="text-sm font-medium text-blue-600 hover:text-blue-700 underline underline-offset-4 decoration-2 decoration-blue-200 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-sm cursor-pointer"
             >
               Probar simulador inmersivo en vivo &rarr;
-            </button>
-          </motion.div>
+            </motion.button>
+          </div>
         </div>
 
         {/* Bloque WebGL / MediaPipe (Reserva de espacio absoluta CLS: 0) */}
@@ -75,10 +78,7 @@ export default function ArShowcase() {
               <ambientLight intensity={0.5} />
               <directionalLight position={[10, 10, 5]} intensity={1.5} />
               <Environment preset="city" />
-              <mesh>
-                <sphereGeometry args={[1.5, 32, 32]} />
-                <meshStandardMaterial color="#3b82f6" wireframe opacity={0.3} transparent />
-              </mesh>
+              <FacialNervesModel />
               <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={1.0} />
             </Canvas>
           )}
