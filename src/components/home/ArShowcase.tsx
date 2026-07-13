@@ -3,11 +3,12 @@ import { motion, useInView } from "framer-motion";
 import { ScanFace } from "lucide-react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Environment } from "@react-three/drei";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function ArShowcase() {
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { once: true, margin: "-100px" });
+  const navigate = useNavigate();
 
   return (
     <section className="py-24 px-6 max-w-7xl mx-auto relative overflow-hidden" ref={containerRef}>
@@ -37,9 +38,12 @@ export default function ArShowcase() {
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
           >
-            <Link to="/diagnostico" className="text-sm font-medium text-blue-600 hover:text-blue-700 underline underline-offset-4 decoration-2 decoration-blue-200 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-sm">
+            <button 
+              onClick={() => navigate('/diagnostico')}
+              className="text-sm font-medium text-blue-600 hover:text-blue-700 underline underline-offset-4 decoration-2 decoration-blue-200 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-sm cursor-pointer"
+            >
               Probar simulador inmersivo en vivo &rarr;
-            </Link>
+            </button>
           </motion.div>
         </div>
 

@@ -1,7 +1,9 @@
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export default function HeroSection() {
+  const navigate = useNavigate();
+
   return (
     <section className="relative flex flex-col items-center justify-center min-h-[90vh] px-6 text-center overflow-hidden">
       <motion.div
@@ -28,9 +30,12 @@ export default function HeroSection() {
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
         >
-          <Link to="/diagnostico" className="inline-block relative px-8 py-4 text-lg font-medium text-white transition-all duration-300 bg-blue-600 rounded-2xl shadow-[0_0_40px_-10px_rgba(37,99,235,0.5)] hover:bg-blue-700 hover:shadow-[0_0_60px_-15px_rgba(37,99,235,0.6)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-50">
+          <button 
+            onClick={() => navigate('/diagnostico')}
+            className="inline-block relative px-8 py-4 text-lg font-medium text-white transition-all duration-300 bg-blue-600 rounded-2xl shadow-[0_0_40px_-10px_rgba(37,99,235,0.5)] hover:bg-blue-700 hover:shadow-[0_0_60px_-15px_rgba(37,99,235,0.6)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-50 cursor-pointer"
+          >
             Iniciar Diagnóstico
-          </Link>
+          </button>
         </motion.div>
       </motion.div>
     </section>
