@@ -1,12 +1,18 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, type MouseEvent } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { Camera, Smile, Sparkles, Rotate3d, Smartphone, ScanLine } from "lucide-react";
 import { toast } from "sonner";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from "@/components/ui/dialog";
+import { AnatomyHotspots } from "@/components/AnatomyHotspots";
 
 const MODEL_SRC = "/models/face.glb";
+
+interface ArViewerProps {
+  exerciseTitle?: string;
+  exerciseInstruction?: string;
+}
 
 const detectMobile = () => {
   if (typeof navigator === "undefined") return false;
@@ -20,16 +26,42 @@ const detectMobile = () => {
   return uaMobile || touch;
 };
 
-export const ArViewer = () => {
+export const ArViewer = ({ exerciseTitle, exerciseInstruction }: ArViewerProps) => {
   const viewerRef = useRef<HTMLElement>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [qrOpen, setQrOpen] = useState(false);
   const [pageUrl, setPageUrl] = useState("");
+  const [anatomyGroup, setAnatomyGroup] = useState<"none" | "muscle" | "nerve">("none");
+  const [calibrating, setCalibrating] = useState(false);
 
   useEffect(() => {
     setIsMobile(detectMobile());
     setPageUrl(window.location.href);
   }, []);
+
+  const handleModelClick = async (e: MouseEvent<HTMLElement>) => {
+    if (!calibrating) return;
+    const mv: any = viewerRef.current;
+    if (!mv || typeof mv.positionAndNormalFromPoint !== "function") return;
+    const rect = mv.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const hit = mv.positionAndNormalFromPoint(x, y);
+    if (!hit) {
+      toast.error("No se detectó el modelo en ese punto, intenta de nuevo.");
+      return;
+    }
+    const posStr = `${hit.position.x.toFixed(2)} ${hit.position.y.toFixed(2)} ${hit.position.z.toFixed(2)}`;
+    const normStr = `${hit.normal.x.toFixed(2)} ${hit.normal.y.toFixed(2)} ${hit.normal.z.toFixed(2)}`;
+    try {
+      await navigator.clipboard.writeText(`position="${posStr}" normal="${normStr}"`);
+      toast.success("Coordenadas copiadas", { description: `position: ${posStr} · normal: ${normStr}` });
+    } catch {
+      toast.info("Coordenadas obtenidas", { description: `position: ${posStr} · normal: ${normStr}` });
+    }
+    // eslint-disable-next-line no-console
+    console.log("[Calibración RA]", { position: posStr, normal: normStr });
+  };
 
   const handleAR = () => {
     if (isMobile) {
@@ -54,9 +86,9 @@ export const ArViewer = () => {
             <Sparkles className="h-3.5 w-3.5" />
             Ejercicio activo
           </div>
-          <h2 className="text-2xl font-bold tracking-tight text-slate-900">Simular sonrisa</h2>
+          <h2 className="text-2xl font-bold tracking-tight text-slate-900">{exerciseTitle ?? "Simular sonrisa"}</h2>
           <p className="text-sm text-slate-500 mt-1.5 max-w-md leading-relaxed">
-            Eleva de forma simétrica ambas comisuras de los labios y mantén la posición. Observa el modelo y replica el movimiento frente al espejo.
+            {exerciseInstruction ?? "Eleva de forma simétrica ambas comisuras de los labios y mantén la posición. Observa el modelo y replica el movimiento frente al espejo."}
           </p>
         </div>
         <div className="hidden sm:flex h-12 w-12 shrink-0 rounded-xl bg-slate-900 items-center justify-center">
@@ -74,7 +106,7 @@ export const ArViewer = () => {
           src={MODEL_SRC}
           alt="Modelo anatómico 3D de rostro para rehabilitación facial"
           camera-controls=""
-          auto-rotate=""
+          auto-rotate={anatomyGroup === "none" ? "" : undefined}
           auto-rotate-delay="800"
           rotation-per-second="16deg"
           ar=""
@@ -83,8 +115,11 @@ export const ArViewer = () => {
           shadow-intensity="0.6"
           exposure="1.15"
           interaction-prompt="none"
-          style={{ position: "absolute", inset: 0 }}
-        />
+          onClick={handleModelClick}
+          style={{ position: "absolute", inset: 0, cursor: calibrating ? "crosshair" : undefined }}
+        >
+          <AnatomyHotspots visibleGroup={anatomyGroup} />
+        </model-viewer>
         <div className="absolute top-3 left-3 flex items-center gap-1.5 text-[11px] font-medium text-slate-200 bg-black/40 backdrop-blur-sm rounded-full px-2.5 py-1 pointer-events-none">
           <Rotate3d className="h-3.5 w-3.5 text-blue-300" />
           Modelo anatómico · WebAR
@@ -98,13 +133,46 @@ export const ArViewer = () => {
         </div>
       </div>
 
-      <button data-testid="ar-button" onClick={handleAR} className="mt-5 w-full inline-flex items-center justify-center gap-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl py-3.5 text-base font-semibold transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 pulse-ring">
+      <div className="flex items-center gap-2 mt-4">
+        <span className="text-[11px] font-semibold text-slate-500 mr-1">Capa anatómica:</span>
+        <button
+          data-testid="anatomy-toggle-none"
+          onClick={() => setAnatomyGroup("none")}
+          className={`text-xs font-medium rounded-full px-3 py-1.5 border transition-colors ${anatomyGroup === "none" ? "bg-slate-900 text-white border-slate-900" : "bg-white text-slate-600 border-slate-200 hover:border-slate-400"}`}
+        >
+          Ninguna
+        </button>
+        <button
+          data-testid="anatomy-toggle-muscle"
+          onClick={() => setAnatomyGroup("muscle")}
+          className={`text-xs font-medium rounded-full px-3 py-1.5 border transition-colors ${anatomyGroup === "muscle" ? "bg-emerald-600 text-white border-emerald-600" : "bg-white text-slate-600 border-slate-200 hover:border-emerald-400"}`}
+        >
+          Músculos
+        </button>
+        <button
+          data-testid="anatomy-toggle-nerve"
+          onClick={() => setAnatomyGroup("nerve")}
+          className={`text-xs font-medium rounded-full px-3 py-1.5 border transition-colors ${anatomyGroup === "nerve" ? "bg-yellow-500 text-white border-yellow-500" : "bg-white text-slate-600 border-slate-200 hover:border-yellow-400"}`}
+        >
+          Nervio facial
+        </button>
+        <button
+          data-testid="calibration-toggle"
+          onClick={() => setCalibrating((v) => !v)}
+          title="Modo calibración: clic sobre el modelo para copiar la posición exacta"
+          className={`ml-auto text-[11px] font-medium rounded-full px-3 py-1.5 border transition-colors ${calibrating ? "bg-rose-600 text-white border-rose-600" : "bg-white text-slate-400 border-slate-200 hover:border-slate-400"}`}
+        >
+          {calibrating ? "Calibrando…" : "Modo calibración"}
+        </button>
+      </div>
+
+      <button data-testid="ar-button" onClick={handleAR} className="mt-4 w-full inline-flex items-center justify-center gap-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl py-3.5 text-base font-semibold transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 pulse-ring">
         <Camera className="h-5 w-5 text-blue-400" />
         {isMobile ? "Ver en tu espacio en RA" : "Ver en RA (escanear con móvil)"}
       </button>
       <p className="text-[11px] text-slate-400 text-center mt-2">
         {isMobile
-          ? "Se abrirá la cámara de tu dispositivo para proyectar el modelo 3D."
+          ? "Se abrirá la cámara de tu dispositivo para proyectar el modelo 3D. Las capas de músculos/nervio también se ven dentro de la sesión de RA."
           : "La Realidad Aumentada requiere un móvil o tablet. Escanea el código QR para abrirlo allí."}
       </p>
 

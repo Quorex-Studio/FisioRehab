@@ -1,10 +1,11 @@
+import { Link } from "react-router-dom";
 import { Activity, ShieldCheck } from "lucide-react";
 
 export const Header = () => {
   return (
     <header data-testid="app-header" className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
-        <div className="flex items-center gap-3">
+        <Link to="/" className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-xl bg-blue-600 flex items-center justify-center shadow-sm shadow-blue-600/30">
             <Activity className="h-5 w-5 text-white" strokeWidth={2.5} />
           </div>
@@ -14,7 +15,11 @@ export const Header = () => {
             </h1>
             <p className="text-[11px] font-medium text-slate-500 -mt-0.5">Rehabilitación de parálisis facial</p>
           </div>
-        </div>
+        </Link>
+        <nav className="hidden md:flex items-center gap-5 text-sm font-medium text-slate-500">
+          <Link to="/informacion" data-testid="nav-informacion" className="hover:text-blue-600 transition-colors">Información y consejos</Link>
+          <Link to="/diagnostico" data-testid="nav-simulador" className="hover:text-blue-600 transition-colors">Simulador</Link>
+        </nav>
         <div className="flex items-center gap-4">
           <div className="hidden sm:flex items-center gap-1.5 text-xs font-medium text-emerald-600 bg-emerald-50 border border-emerald-100 rounded-full px-3 py-1.5">
             <ShieldCheck className="h-3.5 w-3.5" />

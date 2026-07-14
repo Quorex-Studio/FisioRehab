@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "sonner";
 import Dashboard from "@/pages/Dashboard";
 import Home from "@/pages/Home";
+import Info from "@/pages/Info";
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/diagnostico" element={<Dashboard />} />
+          <Route path="/informacion" element={<Info />} />
         </Routes>
       </BrowserRouter>
       <Toaster position="top-center" richColors />

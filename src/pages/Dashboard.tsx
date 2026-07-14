@@ -1,14 +1,14 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { toast } from "sonner";
-import { ClipboardCheck, Stethoscope } from "lucide-react";
+import { ClipboardCheck, Stethoscope, PlayCircle, ChevronRight } from "lucide-react";
 import { Header } from "@/components/Header";
 import { ArViewer } from "@/components/ArViewer";
 import { Stopwatch } from "@/components/Stopwatch";
 import { EvaluationScale } from "@/components/EvaluationScale";
 import { ProgressTable } from "@/components/ProgressTable";
 import { ResourcesGrid } from "@/components/ResourcesGrid";
-
-const ACTIVE_EXERCISE = "Simular sonrisa";
+import { ExerciseCards } from "@/components/ExerciseCards";
+import { EXERCISES, type ExerciseId } from "@/data/exercises";
 
 const INITIAL_ROWS = [
   { id: 1, exercise: "Cerrar párpado", date: "10 jun 2026", time: "00:04.5", grade: 3 },
@@ -29,6 +29,11 @@ export default function Dashboard() {
   const [running, setRunning] = useState(false);
   const [scale, setScale] = useState<number | null>(null);
   const [rows, setRows] = useState(INITIAL_ROWS);
+  const [activeExerciseId, setActiveExerciseId] = useState<ExerciseId>("sonrisa");
+  const [guidedMode, setGuidedMode] = useState(false);
+  const [guidedIndex, setGuidedIndex] = useState(0);
+
+  const activeExercise = EXERCISES.find((e) => e.id === activeExerciseId) ?? EXERCISES[0];
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const startStampRef = useRef(0);
@@ -77,33 +82,76 @@ export default function Dashboard() {
     setRunning(false);
     const newRow = {
       id: Date.now(),
-      exercise: ACTIVE_EXERCISE,
+      exercise: activeExercise.title,
       date: new Date().toLocaleDateString("es-ES", { day: "numeric", month: "short", year: "numeric" }),
       time: formatTime(elapsed),
       grade: scale,
     };
     setRows((prev) => [newRow, ...prev]);
     toast.success("Evaluación registrada", {
-      description: `${ACTIVE_EXERCISE} · ${newRow.time} · Grado ${scale}/5`,
+      description: `${activeExercise.title} · ${newRow.time} · Grado ${scale}/5`,
     });
     setScale(null);
     setElapsed(0);
+
+    if (guidedMode) {
+      const nextIndex = guidedIndex + 1;
+      if (nextIndex < EXERCISES.length) {
+        setGuidedIndex(nextIndex);
+        setActiveExerciseId(EXERCISES[nextIndex].id);
+        toast.info(`Siguiente ejercicio guiado: ${EXERCISES[nextIndex].title}`);
+      } else {
+        setGuidedMode(false);
+        toast.success("Rutina guiada completada", {
+          description: "Se evaluaron todos los ejercicios de la secuencia.",
+        });
+      }
+    }
+  };
+
+  const startGuidedRoutine = () => {
+    setGuidedMode(true);
+    setGuidedIndex(0);
+    setActiveExerciseId(EXERCISES[0].id);
+    setScale(null);
+    handleReset();
+    toast.info("Rutina guiada iniciada", {
+      description: `Ejercicio 1 de ${EXERCISES.length}: ${EXERCISES[0].title}`,
+    });
   };
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
-        <div className="flex items-center gap-2 mb-6 animate-fade-up">
-          <Stethoscope className="h-4 w-4 text-blue-600" />
-          <p className="text-sm text-slate-500">
-            Consultorio · <span className="font-medium text-slate-700">Paciente: M. Rossi</span> · Sesión de rehabilitación facial
-          </p>
+        <div className="flex items-center justify-between gap-2 mb-6 animate-fade-up flex-wrap">
+          <div className="flex items-center gap-2">
+            <Stethoscope className="h-4 w-4 text-blue-600" />
+            <p className="text-sm text-slate-500">
+              Consultorio · <span className="font-medium text-slate-700">Paciente: M. Rossi</span> · Sesión de rehabilitación facial
+            </p>
+          </div>
+          {!guidedMode ? (
+            <button
+              data-testid="start-guided-routine"
+              onClick={startGuidedRoutine}
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-100 rounded-full px-3 py-1.5 hover:bg-blue-100 transition-colors"
+            >
+              <PlayCircle className="h-3.5 w-3.5" />
+              Iniciar rutina guiada ({EXERCISES.length} ejercicios)
+            </button>
+          ) : (
+            <div data-testid="guided-progress" className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-full px-3 py-1.5">
+              <ChevronRight className="h-3.5 w-3.5" />
+              Guiado: paso {guidedIndex + 1} de {EXERCISES.length}
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
           <div className="lg:col-span-7 flex flex-col gap-6">
-            <ArViewer />
+            <ArViewer exerciseTitle={activeExercise.title} exerciseInstruction={activeExercise.instruction} />
+            <ExerciseCards selected={activeExerciseId} onSelect={(id) => { setActiveExerciseId(id); setGuidedMode(false); }} />
           </div>
 
           <div className="lg:col-span-5 flex flex-col gap-6">
