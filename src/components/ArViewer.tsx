@@ -8,6 +8,7 @@ import {
 import { AnatomyHotspots } from "@/components/AnatomyHotspots";
 
 const MODEL_SRC = "/models/face.glb";
+const ModelViewer = "model-viewer" as any;
 
 interface ArViewerProps {
   exerciseTitle?: string;
@@ -100,8 +101,7 @@ export const ArViewer = ({ exerciseTitle, exerciseInstruction }: ArViewerProps) 
         <div className="absolute inset-0 opacity-30 pointer-events-none" style={{
           backgroundImage: "radial-gradient(circle at 30% 20%, rgba(59,130,246,0.35), transparent 45%), radial-gradient(circle at 80% 80%, rgba(59,130,246,0.2), transparent 50%)",
         }} />
-        {/* @ts-expect-error custom element */}
-        <model-viewer
+        <ModelViewer
           ref={viewerRef}
           src={MODEL_SRC}
           alt="Modelo anatómico 3D de rostro para rehabilitación facial"
@@ -119,7 +119,7 @@ export const ArViewer = ({ exerciseTitle, exerciseInstruction }: ArViewerProps) 
           style={{ position: "absolute", inset: 0, cursor: calibrating ? "crosshair" : undefined }}
         >
           <AnatomyHotspots visibleGroup={anatomyGroup} />
-        </model-viewer>
+        </ModelViewer>
         <div className="absolute top-3 left-3 flex items-center gap-1.5 text-[11px] font-medium text-slate-200 bg-black/40 backdrop-blur-sm rounded-full px-2.5 py-1 pointer-events-none">
           <Rotate3d className="h-3.5 w-3.5 text-blue-300" />
           Modelo anatómico · WebAR
