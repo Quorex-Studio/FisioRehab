@@ -215,7 +215,7 @@ export const ArViewer = ({ exerciseTitle, exerciseInstruction, activeExerciseId 
     setSimulating(false);
     if (activeExerciseId) {
       const ids = EXERCISE_HOTSPOT_MAP[activeExerciseId] ?? [];
-      updateActivation(Object.fromEntries(ids.map((id) => [id, 0])));
+      updateActivation(Object.fromEntries(ids.map((id: string) => [id, 0])));
     }
   };
 
