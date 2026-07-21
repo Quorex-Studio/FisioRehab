@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect, type MouseEvent } from "react";
 import { QRCodeSVG } from "qrcode.react";
-import { Camera, Smile, Sparkles, Rotate3d, Smartphone, ScanLine, ScanFace, Box, Download, Loader2, Wand2, Square } from "lucide-react";
+import { Camera, Smile, Sparkles, Rotate3d, Smartphone, ScanLine, ScanFace, Box, Download, Loader2, Wand2, Square, Maximize } from "lucide-react";
 import { toast } from "sonner";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
@@ -40,7 +40,9 @@ const detectInAppBrowser = () => {
 
 export const ArViewer = ({ exerciseTitle, exerciseInstruction, activeExerciseId }: ArViewerProps) => {
   const viewerRef = useRef<HTMLElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [qrOpen, setQrOpen] = useState(false);
   const [pageUrl, setPageUrl] = useState("");
   const [anatomyGroup, setAnatomyGroup] = useState<"none" | "muscle" | "nerve">("none");
@@ -61,6 +63,25 @@ export const ArViewer = ({ exerciseTitle, exerciseInstruction, activeExerciseId 
     // WebXR y Quick Look exigen contexto seguro (https, o localhost en dev).
     setInsecureContext(typeof window !== "undefined" && window.isSecureContext === false);
   }, []);
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  }, []);
+
+  const toggleFullscreen = async () => {
+    if (!document.fullscreenElement) {
+      await containerRef.current?.requestFullscreen().catch(() => {
+        toast.error("No se pudo activar la pantalla completa");
+      });
+    } else {
+      await document.exitFullscreen().catch(() => {});
+    }
+  };
+
 
   // Diagnóstico: <model-viewer> emite eventos reales cuando algo falla.
   // Sin esto, un fallo de carga o de AR se queda en silencio para el usuario.
@@ -312,7 +333,15 @@ export const ArViewer = ({ exerciseTitle, exerciseInstruction, activeExerciseId 
             : "estás dentro del navegador de una app (Instagram/WhatsApp/TikTok). Toca el menú (⋯) y elige \"Abrir en el navegador\"."}
         </div>
       )}
-      <div className="relative rounded-xl overflow-hidden bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950 border border-slate-800 aspect-video">
+      <div ref={containerRef} className={`relative overflow-hidden bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950 border border-slate-800 ${isFullscreen ? "h-screen w-screen rounded-none" : "rounded-xl aspect-video"}`}>
+        <button
+          onClick={toggleFullscreen}
+          title={isFullscreen ? "Salir de pantalla completa" : "Pantalla completa"}
+          className="absolute top-3 right-3 z-20 flex items-center justify-center p-2 rounded-full bg-black/40 hover:bg-black/60 text-slate-200 backdrop-blur-sm transition-colors"
+        >
+          <Maximize className="h-4 w-4 text-blue-300" />
+        </button>
+
         {viewMode === "mirror" ? (
           <FaceMirror active={viewMode === "mirror" && !insecureContext && !inAppBrowser} />
         ) : (
@@ -366,7 +395,7 @@ export const ArViewer = ({ exerciseTitle, exerciseInstruction, activeExerciseId 
               <Download className="h-3.5 w-3.5 text-blue-300" />
               Guardar foto
             </button>
-            <div data-testid="device-badge" className="absolute top-3 right-3 flex items-center gap-1.5 text-[11px] font-medium text-slate-200 bg-black/40 backdrop-blur-sm rounded-full px-2.5 py-1 pointer-events-none">
+            <div data-testid="device-badge" className={`absolute top-3 right-14 flex items-center gap-1.5 text-[11px] font-medium text-slate-200 bg-black/40 backdrop-blur-sm rounded-full px-2.5 py-1 pointer-events-none transition-opacity ${isFullscreen ? "opacity-0" : "opacity-100"}`}>
               <Smartphone className="h-3.5 w-3.5 text-blue-300" />
               {isMobile ? "Móvil · RA lista" : "Escritorio"}
             </div>
